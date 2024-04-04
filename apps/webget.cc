@@ -6,21 +6,26 @@
 
 using namespace std;
 
-void get_URL(const string &host, const string &path) {
-    // Your code here.
+void get_URL(const string &host, const string &path)
+{
+    TCPSocket client_socket{};
+    // uint16_t port_num = 80; // This is a HTTP request, so it's 80.
+    // client_socket.connect(Address(host, port_num));
+    client_socket.connect(Address(host, "http"));
 
-    // You will need to connect to the "http" service on
-    // the computer whose name is in the "host" string,
-    // then request the URL path given in the "path" string.
+    client_socket.write("GET " + path + " HTTP/1.1\r\n");
+    client_socket.write("Host:" + host + "\r\n");
+    client_socket.write("\r\n"); // end the request
 
-    // Then you'll need to print out everything the server sends back,
-    // (not just one call to read() -- everything) until you reach
-    // the "eof" (end of file).
+    client_socket.shutdown(SHUT_WR);
 
-    cerr << "Function called: get_URL(" << host << ", " << path << ").\n";
-    cerr << "Warning: get_URL() has not been implemented yet.\n";
+    while (!client_socket.eof())
+    {
+        cout << client_socket.read();
+    }
+
+
 }
-
 int main(int argc, char *argv[]) {
     try {
         if (argc <= 0) {
